@@ -1,0 +1,10 @@
+{
+  "name": "dumi-tv",
+  "version": "1.0.0",
+  "description": "Dumi TV: an Apple TV-style home screen with Dumi Assistant (Gemini) for Samsung Tizen TVs, as a TizenBrew app module.",
+  "packageType": "app",
+  "appName": "Dumi TV",
+  "appPath": "app/index.html",
+  "keys": ["ColorF0Red", "ColorF1Green", "ColorF2Yellow", "ColorF3Blue"],
+  "license": "MIT"
+}

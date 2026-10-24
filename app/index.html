@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>Dumi TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tektur:wght@400;500&family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <!-- Wallpaper: two layers so a new photo can crossfade in. -->
+  <div id="wall"><img class="layer" id="wallA" alt=""><img class="layer" id="wallB" alt=""></div>
+  <div id="scrim"></div>
+  <div id="dim"></div>
+  <div id="glow"></div>
+
+  <div id="content">
+    <section id="hero">
+      <header id="header">
+        <div id="corner">
+          <div id="greeting"></div>
+          <div id="clock"></div>
+          <div id="date"></div>
+        </div>
+        <div id="pills">
+          <div class="pill" data-action="assistant"><span class="dot"></span>Dumi</div>
+          <div class="pill" data-action="settings">⚙&nbsp; Setări</div>
+        </div>
+      </header>
+      <div id="bottom">
+        <div id="title"></div>
+        <div id="dock"></div>
+      </div>
+    </section>
+    <div id="appsLabel" class="label">TOATE APLICAȚIILE</div>
+    <div id="grid"></div>
+  </div>
+
+  <!-- Dumi Assistant -->
+  <div id="assistant" class="overlay hidden">
+    <div class="asScrim"></div>
+    <div class="asCol">
+      <div class="asHead"><canvas id="orb" width="120" height="120"></canvas>
+        <div><div class="asBrand">Dumi Assistant</div><div id="asStatus" class="asStatus"></div></div>
+      </div>
+      <div id="asQuestion" class="asQuestion"></div>
+      <div id="asDots" class="dots hidden"><i></i><i></i><i></i></div>
+      <div id="asAnswer" class="asAnswer"></div>
+      <div id="asChips" class="chips"></div>
+      <input id="asInput" class="asInput" type="text" autocomplete="off">
+    </div>
+    <div id="asHint" class="hintBar"></div>
+  </div>
+
+  <!-- Settings -->
+  <div id="settings" class="overlay hidden">
+    <div class="setBg"></div>
+    <div class="setCols">
+      <div class="setNav">
+        <div class="eyebrow">DUMI TV</div>
+        <div class="setTitle">Setări</div>
+        <div id="setSections"></div>
+        <div class="setFoot">Se salvează imediat<br>BACK pentru înapoi</div>
+      </div>
+      <div class="setPanel">
+        <div id="setPanelTitle" class="panelTitle"></div>
+        <div id="setPanelHint" class="panelHint"></div>
+        <div id="setRows" class="rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boot intro -->
+  <div id="intro" class="hidden">
+    <div id="introBlack"></div>
+    <div id="introMid"><div id="introClock"></div><div id="introLine"></div><div id="introHello"></div></div>
+  </div>
+  <div id="toast" class="toast"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>
