@@ -164,21 +164,40 @@
   }
 
   // ---------------------------------------------------------------- apps
-  var apps = [];
+  // Only the apps actually installed on the TV. The sample list is for trying the page on a computer
+  // and only appears with ?demo in the address.
+  var apps = [], appsProblem = '';
   var DEMO = ['Netflix', 'YouTube', 'Spotify', 'Prime Video', 'Disney+', 'Plex', 'Apple TV', 'Internet', 'Galerie', 'SmartThings', 'TizenBrew'];
   function loadApps(done) {
+    appsProblem = '';
     if (!HAS_TIZEN) {
-      apps = DEMO.map(function (n) { return { id: 'demo.' + n, name: n, icon: null }; });
+      if (/[?&]demo\b/.test(location.search)) {
+        apps = DEMO.map(function (n) { return { id: 'demo.' + n, name: n, icon: null }; });
+      } else {
+        apps = [];
+        appsProblem = /Tizen/i.test(navigator.userAgent)
+          ? 'Nu pot citi aplicațiile televizorului (TizenBrew nu dă acces la lista lor).'
+          : 'Deschide Dumi TV pe televizor ca să-ți văd aplicațiile.';
+      }
       return done();
     }
     try {
       tizen.application.getAppsInfo(function (list) {
-        apps = list.filter(function (a) { return a.show !== false && a.name && a.id; })
+        var self = '';
+        try { self = tizen.application.getCurrentApplication().appInfo.id; } catch (e) { }
+        apps = list.filter(function (a) { return a.show !== false && a.name && a.id && a.id !== self; })
           .map(function (a) { return { id: a.id, name: a.name, icon: a.iconPath || null }; })
           .sort(function (a, b) { return a.name.localeCompare(b.name); });
+        if (!apps.length) appsProblem = 'Nu am găsit aplicații instalate pe televizor.';
         done();
-      }, function () { apps = []; done(); });
-    } catch (e) { apps = []; done(); }
+      }, function (err) {
+        apps = []; appsProblem = 'Nu pot citi aplicațiile televizorului: ' + (err && err.message || 'eroare');
+        done();
+      });
+    } catch (e) {
+      apps = []; appsProblem = 'Nu pot citi aplicațiile televizorului: ' + e.message;
+      done();
+    }
   }
   function findApp(name) {
     if (!name) return null;
@@ -298,6 +317,10 @@
     });
     $('appsLabel').textContent = t('all_apps');
     $('appsLabel').style.display = gridCells.length ? '' : 'none';
+    var empty = $('empty');
+    empty.textContent = appsProblem;
+    empty.style.display = appsProblem ? '' : 'none';
+    $('dock').style.display = dockTiles.length ? '' : 'none';
     if (!dockTiles.length && focus.zone === 'dock') focus = gridCells.length ? { zone: 'grid', i: 0 } : { zone: 'pills', i: 0 };
     setFocus(focus.zone, Math.min(focus.i, zoneSize(focus.zone) - 1), false);
   }
