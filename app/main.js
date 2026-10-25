@@ -211,21 +211,69 @@
     var h = 0; for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
     return h;
   }
+  /**
+   * Brand looks for well-known apps: [name pattern, Simple Icons logo (or null), tile colour, logo colour].
+   * Logos come from the free Simple Icons set via its CDN; apps without one get their name as a wordmark.
+   */
+  var BRANDS = [
+    [/youtube\s*music/i, 'youtubemusic', '#000000', 'FF0000'],
+    [/youtube/i, 'youtube', '#FFFFFF', 'FF0000'],
+    [/netflix/i, 'netflix', '#000000', 'E50914'],
+    [/spotify/i, 'spotify', '#000000', '1ED760'],
+    [/plex/i, 'plex', '#1F1F1F', 'EBAF00'],
+    [/apple\s*tv/i, 'appletv', '#000000', 'FFFFFF'],
+    [/apple\s*music/i, 'applemusic', '#FA243C', 'FFFFFF'],
+    [/hbo\s*max|^max$/i, 'max', '#0026FF', 'FFFFFF'],
+    [/hbo/i, 'hbo', '#000000', 'FFFFFF'],
+    [/twitch/i, 'twitch', '#9146FF', 'FFFFFF'],
+    [/tiktok/i, 'tiktok', '#000000', 'FFFFFF'],
+    [/facebook/i, 'facebook', '#0866FF', 'FFFFFF'],
+    [/instagram/i, 'instagram', '#E1306C', 'FFFFFF'],
+    [/kodi/i, 'kodi', '#17B2E7', 'FFFFFF'],
+    [/smartthings/i, 'smartthings', '#15BFFF', 'FFFFFF'],
+    [/samsung/i, 'samsung', '#1428A0', 'FFFFFF'],
+    [/google\s*play|play\s*store/i, 'googleplay', '#FFFFFF', '414141'],
+    [/chrome/i, 'googlechrome', '#FFFFFF', '4285F4'],
+    [/paramount/i, 'paramountplus', '#0064FF', 'FFFFFF'],
+    [/crunchyroll/i, 'crunchyroll', '#FF5E00', 'FFFFFF'],
+    [/deezer/i, 'deezer', '#000000', 'A238FF'],
+    [/soundcloud/i, 'soundcloud', '#FF5500', 'FFFFFF'],
+    [/dazn/i, 'dazn', '#0C161C', 'F8F8F5'],
+    [/mubi/i, 'mubi', '#000000', 'FFFFFF'],
+    [/prime\s*video|amazon/i, null, '#00A8E1', 'FFFFFF'],
+    [/disney/i, null, '#0E1A4B', 'FFFFFF']
+  ];
+  function brandOf(name) {
+    for (var i = 0; i < BRANDS.length; i++) if (BRANDS[i][0].test(name)) return BRANDS[i];
+    return null;
+  }
+  /** Tile art: brand logo → the TV's own app icon → the app's name on a colour gradient. */
   function tile(app) {
     var el = document.createElement('div');
     el.className = 'tile';
-    var h = hue(app.name);
-    el.style.background = 'linear-gradient(135deg, hsl(' + h + ',45%,32%), hsl(' + ((h + 40) % 360) + ',50%,18%))';
-    var initials = document.createElement('div');
-    initials.className = 'initials';
-    initials.textContent = app.name.replace(/[^A-Za-z0-9+ ]/g, '').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3) || app.name.slice(0, 2);
-    el.appendChild(initials);
-    if (app.icon) {
-      var img = new Image();
-      img.className = 'icon';
-      img.onload = function () { el.replaceChild(img, initials); };
-      img.src = app.icon.charAt(0) === '/' ? 'file://' + app.icon : app.icon;
+    var brand = brandOf(app.name), h = hue(app.name);
+    var word = document.createElement('div');
+    word.className = 'wordmark';
+    word.textContent = app.name;
+    if (brand) {
+      el.style.background = brand[2];
+      word.style.color = '#' + brand[3];
+    } else {
+      el.style.background = 'linear-gradient(135deg, hsl(' + h + ',45%,32%), hsl(' + ((h + 40) % 360) + ',50%,18%))';
     }
+    el.appendChild(word);
+
+    var sources = [];
+    if (brand && brand[1]) sources.push({ src: 'https://cdn.simpleicons.org/' + brand[1] + '/' + brand[3], cls: 'logo' });
+    if (app.icon) sources.push({ src: app.icon.charAt(0) === '/' ? 'file://' + app.icon : app.icon, cls: 'icon' });
+    (function tryNext() {
+      var s = sources.shift(); if (!s) return; // keep the wordmark
+      var img = new Image();
+      img.className = s.cls;
+      img.onload = function () { if (word.parentNode === el) el.replaceChild(img, word); };
+      img.onerror = tryNext;
+      img.src = s.src;
+    })();
     return el;
   }
 
