@@ -11,13 +11,17 @@ launcher replacement).
   speaks the answer, and can open apps or change the volume.
 - Settings (GREEN button): clock, photos, dock, assistant language and voice, sounds.
 
-## Install with TizenBrew
+## Install as a TV app (TizenBrew Installer)
 
-1. Open TizenBrew on the TV → **Module Manager** → add a module.
-2. Enter `gh/<your-github-username>/dumi-tv` and confirm.
-3. Start **Dumi TV** from TizenBrew.
-4. Press GREEN → **Asistent** → **Cheie Gemini** and type your Gemini API key
-   (free from [aistudio.google.com](https://aistudio.google.com)). It is saved on the TV only, never in this repo.
+1. `python build-wgt.py` makes `DumiTV.wgt`; attach it to a GitHub release of this repo.
+2. Put the TV in Developer Mode (Apps → `12345`, Host PC IP = your computer) and restart it fully.
+3. In TizenBrew Installer, install from GitHub: `thedragonsdvl-maker/dumi-tv`.
+4. Open **Dumi TV** from the TV's apps. Press GREEN → **Asistent** → **Cheie Gemini** and type your
+   Gemini API key (free from [aistudio.google.com](https://aistudio.google.com)). It is saved on the TV only.
+
+## Or as a TizenBrew module
+
+In TizenBrew → Module Manager, add `gh/thedragonsdvl-maker/dumi-tv`.
 
 ## Remote
 

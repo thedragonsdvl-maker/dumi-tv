@@ -386,6 +386,8 @@
     if (k === 'back') {
       if (z === 'grid') { sfx('back'); return setFocus('dock', 0, false); }
       if (z === 'pills') { sfx('back'); return dockTiles.length ? setFocus('dock', 0, false) : null; }
+      // Back on the main screen closes the app, like every Samsung TV app.
+      if (HAS_TIZEN) { try { tizen.application.getCurrentApplication().exit(); } catch (e) { } }
     }
     if (k === 'red') { sfx('select'); return openAssistant(); }
     if (k === 'green') { sfx('select'); return openSettings(); }
